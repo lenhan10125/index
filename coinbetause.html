@@ -23,6 +23,16 @@
         .console { background: #050811; padding: 15px; border-radius: 8px; font-family: 'Fira Code', monospace; font-size: 12px; color: var(--cyan); height: 200px; overflow-y: auto; border: 1px solid #23314d; }
         .success { color: var(--green); }
         .error { color: #ff2a6d; }
+        .security-warning {
+            margin: 14px 0 0;
+            padding: 12px;
+            border: 1px solid var(--orange);
+            border-radius: 6px;
+            background: rgba(255, 107, 0, 0.1);
+            color: #ffd2b0;
+            font-size: 12px;
+            line-height: 1.5;
+        }
         
         /* Hiệu ứng ẩn/hiện Layout */
         #dashboardLayout { display: none; } 
@@ -35,6 +45,7 @@
     <div class="card full">
         <h2 style="text-align: center; font-size: 24px;">ORC NETWORK LOGIN</h2>
         <p style="text-align: center; color: #8a99ad; font-size: 13px;">Sử dụng Private Key để định danh bảo mật</p>
+        <p class="security-warning"><strong>CẢNH BÁO LỪA ĐẢO:</strong> Chỉ nhập Private Key được tạo và sử dụng trên nền tảng ORC. ORC là coin tự tạo của nền tảng, chỉ có hiệu lực trong hệ thống ORC và không thể nhận hoặc sử dụng ở các nền tảng bên ngoài.</p>
         
         <hr style="border-color: #23314d; margin: 20px 0;">
 
