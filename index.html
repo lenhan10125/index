@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kiểm tra hệ thống</title>
+    <title>Yêu cầu JavaScript</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -27,88 +27,24 @@
             color: #d9534f;
             font-weight: bold;
         }
-        .hidden {
-            display: none;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 15px;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        input[type="number"] {
-            padding: 8px;
-            width: 80px;
-            text-align: center;
-            margin-top: 10px;
-        }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <!-- Thông báo nếu JavaScript bị tắt -->
         <noscript>
             <div class="error-message">
-                <h2>Cảnh báo!</h2>
-                <p>Trình duyệt của bạn đang tắt JavaScript. Vui lòng bật JavaScript để tiếp tục truy cập.</p>
+                <h2>Cần bật JavaScript</h2>
+                <p>Trang này cần JavaScript để hoạt động. Vui lòng bật JavaScript trong trình duyệt rồi tải lại trang.</p>
             </div>
         </noscript>
 
-        <!-- Nội dung hiển thị khi JavaScript hoạt động -->
-        <div id="js-content" class="hidden">
-            <h2>Xác thực người dùng</h2>
-            <p>Vui lòng giải phép tính sau để xác minh bạn không phải là bot:</p>
-            
-            <form id="bot-check-form">
-                <label id="captcha-question" style="font-weight: bold;"></label><br>
-                <input type="number" id="captcha-answer" required autocomplete="off"><br>
-                <button type="submit" id="submit-btn">Xác nhận</button>
-            </form>
-
-            <p id="result-message" style="margin-top: 15px;"></p>
+        <div id="js-content">
+            <h2>Đang chuyển hướng...</h2>
+            <p>Vui lòng đợi trong giây lát.</p>
         </div>
     </div>
     <script>
-        // Khi JavaScript hoạt động, hiện phần nội dung kiểm tra
-        document.getElementById('js-content').classList.remove('hidden');
-
-        // Tạo câu hỏi toán học ngẫu nhiên
-        var num1 = Math.floor(Math.random() * 10) + 1;
-        var num2 = Math.floor(Math.random() * 10) + 1;
-        var correctAnswer = num1 + num2;
-
-        document.getElementById('captcha-question').innerText = num1 + " + " + num2 + " = ?";
-
-        // Xử lý sự kiện gửi form
-        document.getElementById('bot-check-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            var userAnswer = parseInt(document.getElementById('captcha-answer').value, 10);
-            var resultMessage = document.getElementById('result-message');
-            var submitBtn = document.getElementById('submit-btn');
-
-            if (userAnswer === correctAnswer) {
-                resultMessage.style.color = "green";
-                resultMessage.innerText = "Xác minh thành công! Đang chuyển hướng...";
-                
-                // Vô hiệu hóa nút bấm và ô nhập để tránh gửi lại
-                submitBtn.disabled = true;
-                document.getElementById('captcha-answer').disabled = true;
-
-                // Thay đổi đường dẫn thành tương đối để chạy mượt mà
-                setTimeout(function() {
-                    window.location.href = "home.html";
-                }, 1000); // Giảm xuống 1 giây để chuyển hướng nhanh hơn
-            } else {
-                resultMessage.style.color = "red";
-                resultMessage.innerText = "Kết quả không đúng, vui lòng thử lại!";
-            }
-        });
+        window.location.href = "home.html";
     </script>
+</body>
+</html>
