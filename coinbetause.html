@@ -33,6 +33,34 @@
             font-size: 12px;
             line-height: 1.5;
         }
+        .contact-links {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 14px;
+        }
+        .contact-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 42px;
+            padding: 10px 12px;
+            border: 1px solid #23314d;
+            border-radius: 6px;
+            background: #1a243d;
+            color: var(--cyan);
+            font-size: 12px;
+            text-align: center;
+            text-decoration: none;
+        }
+        .contact-link:hover {
+            border-color: var(--cyan);
+        }
+        @media (max-width: 620px) {
+            .contact-links {
+                grid-template-columns: 1fr;
+            }
+        }
         
         /* Hiệu ứng ẩn/hiện Layout */
         #dashboardLayout { display: none; } 
@@ -44,18 +72,22 @@
 <div id="loginLayout" class="grid" style="max-width: 600px;">
     <div class="card full">
         <h2 style="text-align: center; font-size: 24px;">ORC NETWORK LOGIN</h2>
-        <p style="text-align: center; color: #8a99ad; font-size: 13px;">Sử dụng Private Key để định danh bảo mật</p>
-        <p class="security-warning"><strong>CẢNH BÁO LỪA ĐẢO:</strong> Chỉ nhập Private Key được tạo và sử dụng trên nền tảng ORC. ORC là coin tự tạo của nền tảng, chỉ có hiệu lực trong hệ thống ORC và không thể nhận hoặc sử dụng ở các nền tảng bên ngoài.</p>
-        
+        <p style="text-align: center; color: #8a99ad; font-size: 13px;">Sử dụng orc Key để định danh bảo mật</p>
+        <p class="security-warning"><strong>CẢNH BÁO LỪA ĐẢO:</strong> Chỉ nhập orc Key được tạo và sử dụng trên nền tảng ORC. ORC là coin tự tạo của nền tảng, chỉ có hiệu lực trong hệ thống ORC và không thể nhận hoặc sử dụng ở các nền tảng bên ngoài.</p>
+        <p class="security-warning"><strong>thông báo:</strong>orc không được gọi là coin theo đúng nghĩa mà là tiền tệ của trang wed và không có giá trị thực tế</p>
+        <div class="contact-links" aria-label="Thông tin liên hệ">
+            <a href="https://www.facebook.com/orichiin" target="_blank" rel="noreferrer" class="contact-link">Facebook ORCcop</a>
+            <a href="https://hentaiorc.xyz/store/copyright/d/Bao_cao_ban_quyen_orccop-w.pdf" target="_blank" rel="noreferrer" class="contact-link">Báo cáo bản quyền</a>
+        </div>
         <hr style="border-color: #23314d; margin: 20px 0;">
 
-        <label style="font-size: 12px; color: var(--cyan); display: block; margin-bottom: 4px;">Đăng nhập bằng Private Key (Bắt đầu bằng 0x...):</label>
-        <input type="password" id="txtLoginKey" placeholder="Nhập Private Key của bạn vào đây">
+        <label style="font-size: 12px; color: var(--cyan); display: block; margin-bottom: 4px;">Đăng nhập bằng orc Key (Bắt đầu bằng 0x...chỉ nhận của orc):</label>
+        <input type="password" id="txtLoginKey" placeholder="Nhập orc Key của bạn vào đây">
         <button id="btnLogin" onclick="login()" style="margin-bottom: 25px;">ĐĂNG NHẬP VÀO HỆ THỐNG</button>
 
         <h3 style="color: var(--purple); font-size: 14px; text-transform: uppercase;">Chưa có tài khoản?</h3>
-        <button class="btn-purple" onclick="generateNewWallet()" style="margin-bottom: 10px;">1. TẠO PRIVATE KEY MỚI</button>
-        <input type="text" id="txtNewKey" placeholder="Private Key mới sẽ xuất hiện ở đây" readonly style="color: #ff2a6d;">
+        <button class="btn-purple" onclick="generateNewWallet()" style="margin-bottom: 10px;">1. TẠO orc KEY MỚI</button>
+        <input type="text" id="txtNewKey" placeholder="orc Key mới sẽ xuất hiện ở đây" readonly style="color: #ff2a6d;">
         <input type="text" id="txtNewAddress" placeholder="Địa chỉ ví công khai" readonly style="color: var(--cyan);">
         <button class="btn-secondary" onclick="registerWallet()">2. ĐĂNG KÝ VÍ NÀY LÊN MẠNG LƯỚI</button>
     </div>
