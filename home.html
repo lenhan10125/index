@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ORCcop — Blog công nghệ &amp; giáo dục lập trình</title>
+<title>ORCcop — Công nghệ và &amp; giáo dục lập trình</title>
 <link rel="icon" href="https://hentaiorc.xyz/ORC.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -193,7 +193,9 @@
     display:flex;align-items:center;justify-content:space-between;
     padding:16px 18px;border-bottom:1px solid var(--line);flex-shrink:0;
   }
-  .settings-header h3{margin:0;font-size:1.05rem;font-weight:600;}
+  .settings-header h3,.settings-header h4{margin:0;color:var(--ink);}
+  .settings-header h3{font-size:1.05rem;font-weight:600;}
+  .settings-header h4{font-size:13px;font-weight:500;}
   .settings-body{
     overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:24px;
     -webkit-overflow-scrolling:touch;
@@ -212,6 +214,13 @@
   }
   .settings-option:hover{border-color:var(--teal);color:var(--ink);}
   .settings-option.is-active{background:var(--teal);border-color:var(--teal);color:#fff;}
+  .settings-panel .btn-ghost{color:var(--ink);background:transparent;}
+  .settings-panel .settings-hint,.settings-panel .settings-note{color:var(--ink-soft);}
+  .settings-panel .settings-group-label{color:var(--teal);}
+  .settings-panel .cache-entry-name{color:var(--ink);}
+  .cache-limit-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .cache-limit-input{width:100px;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:600 14px 'Inter',sans-serif;}
+  .cache-limit-input:focus{outline:2px solid var(--teal);outline-offset:1px;}
 
   .wallpaper-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
   .wallpaper-preview{
@@ -240,6 +249,29 @@
   .settings-group-actions{flex-direction:row;flex-wrap:wrap;gap:10px;padding-top:8px;border-top:1px solid var(--line);}
   .settings-status{margin:0;font-size:12.5px;color:var(--teal);min-height:16px;}
   .settings-status.is-error{color:#C0503F;}
+
+  .cache-inspector-toggle{width:100%;justify-content:space-between;}
+  .cache-inspector-toggle::after{content:'+';font-size:20px;font-weight:400;line-height:1;}
+  .cache-inspector-toggle[aria-expanded="true"]::after{content:'−';}
+  .cache-inspector{display:flex;flex-direction:column;gap:12px;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--paper);}
+  .cache-inspector[hidden]{display:none;}
+  .cache-usage-head{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;color:var(--ink-soft);}
+  .cache-usage-head strong{color:var(--ink);font-size:14px;}
+  .cache-progress{width:100%;height:9px;display:block;appearance:none;border:0;border-radius:999px;overflow:hidden;background:var(--line);}
+  .cache-progress::-webkit-progress-bar{background:var(--line);border-radius:999px;}
+  .cache-progress::-webkit-progress-value{background:var(--teal);border-radius:999px;}
+  .cache-progress::-moz-progress-bar{background:var(--teal);border-radius:999px;}
+  .cache-limit-alert{padding:10px 12px;border:1px solid #C77A2E;border-radius:8px;background:var(--mark-bg);color:var(--mark-fg);font-size:12px;font-weight:600;}
+  .cache-limit-alert[hidden]{display:none;}
+  .cache-inspector-actions{display:flex;gap:8px;flex-wrap:wrap;}
+  .cache-entry-list{display:flex;flex-direction:column;gap:8px;max-height:260px;overflow-y:auto;}
+  .cache-entry{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px;border:1px solid var(--line);border-radius:9px;background:var(--surface);}
+  .cache-entry-info{min-width:0;display:flex;flex-direction:column;gap:2px;}
+  .cache-entry-name{font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .cache-entry-meta{font-size:11px;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .cache-entry-delete{flex-shrink:0;padding:6px 9px;border:1px solid #C0503F;border-radius:7px;background:none;color:#C0503F;cursor:pointer;font:600 11px 'Inter',sans-serif;}
+  .cache-entry-delete:hover{background:#C0503F;color:#fff;}
+  .cache-empty{margin:0;text-align:center;font-size:12px;color:var(--ink-soft);}
 
   /* ── Hero ───────────────────────────────── */
   .hero{padding:72px 0 88px;}
@@ -417,7 +449,7 @@
       <a href="#lien-he">Liên hệ</a>
     </nav>
     <div class="header-actions">
-      <a href="#chuyen-doi" class="btn btn-ghost">Thông báo tên miền</a>
+      <a href="#chuyen-doi" class="btn btn-ghost">Tên miền mới</a>
       <a href="#lien-he" class="btn btn-primary">Liên hệ</a>
       <button class="search-btn" id="settingsBtn" type="button" aria-label="Cài đặt hiển thị" aria-haspopup="dialog" aria-expanded="false">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -495,6 +527,34 @@
         </label>
       </div>
 
+      <div class="settings-group">
+        <span class="settings-group-label">Hạn mức cache</span>
+        <p class="settings-hint">Đặt mức dung lượng cache mong muốn cho trang. Mặc định là 50 MB.</p>
+        <div class="cache-limit-row">
+          <input class="cache-limit-input" id="cacheLimitInput" type="number" min="1" max="2048" step="1" value="50" aria-label="Hạn mức cache theo MB" />
+          <span class="settings-hint">MB</span>
+          <button class="btn btn-ghost" id="cacheLimitSaveBtn" type="button">Lưu hạn mức</button>
+        </div>
+        <p class="settings-note">Đây là hạn mức theo dõi của trang; quota thật do trình duyệt quyết định.</p>
+      </div>
+
+      <div class="settings-group">
+        <button class="btn btn-ghost cache-inspector-toggle" id="cacheInspectorToggle" type="button" aria-expanded="false" aria-controls="cacheInspector">Xem dữ liệu đang lưu trong cache</button>
+        <div class="cache-inspector" id="cacheInspector" hidden>
+          <div class="cache-usage-head">
+            <strong>Dung lượng bộ nhớ trang</strong>
+            <span id="cacheUsageLabel">Đang kiểm tra...</span>
+          </div>
+          <progress class="cache-progress" id="cacheUsageProgress" value="0" max="100" aria-label="Mức sử dụng bộ nhớ trang"></progress>
+          <div class="cache-limit-alert" id="cacheLimitAlert" role="alert" hidden></div>
+          <p class="settings-note" id="cacheSummary">Đang tải danh sách dữ liệu...</p>
+          <div class="cache-inspector-actions">
+            <button class="btn btn-ghost" id="cacheInspectorRefresh" type="button">Cập nhật danh sách</button>
+          </div>
+          <div class="cache-entry-list" id="cacheEntryList" aria-live="polite"></div>
+        </div>
+      </div>
+
       <div class="settings-group settings-group-actions">
         <button class="btn btn-primary" id="settingsSaveBtn" type="button">Lưu vào bộ nhớ đệm</button>
         <button class="btn btn-ghost" id="settingsClearBtn" type="button">Xóa toàn bộ cache</button>
@@ -534,10 +594,10 @@
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12a8 8 0 0 1 15-4M20 12a8 8 0 0 1-15 4"/><path d="M4 4v4h4M20 20v-4h-4"/></svg>
       </div>
       <div>
-        <h3>Chuyển đổi tên miền chính thức</h3>
-        <p>Chúng tôi đang chuyển từ <strong>hentaiorc.xyz</strong> — tên gọi dễ gây hiểu lầm — sang <strong>ORCcop.com</strong> / <strong>ORCcop.edu</strong>. ORICHIIN Studio hiện không còn hoạt động trong lĩnh vực hoạt họa hay truyền hình, mà tập trung vào nội dung học thuật và công nghệ thông tin.</p>
+        <h3>Thông báo tên miền mới</h3>
+        <p>Chúng tôi đã có tên miền mới <a href="https://oriciin.cloud" target="_blank" rel="noreferrer"><strong>oriciin.cloud</strong></a>. Hiện trang đang chuyển dữ liệu sang tên miền mới nên băng thông tạm thời được đóng.</p>
       </div>
-      <span class="date mono">Dự kiến: 03/05/2027</span>
+      <span class="date mono">Trạng thái: Đang chuyển dữ liệu</span>
     </div>
   </section>
 
@@ -630,8 +690,8 @@
         <li class="milestone">
           <span class="num mono">03</span>
           <div>
-            <h4>Ra mắt ORCcop.com / .edu</h4>
-            <p>Hoàn tất chuyển đổi tên miền, dự kiến ngày 03/05/2027.</p>
+            <h4>Chuyển sang oriciin.cloud</h4>
+            <p>Đang chuyển dữ liệu; băng thông tạm thời được đóng.</p>
           </div>
         </li>
       </ul>
@@ -647,7 +707,7 @@
       </div>
       <div class="contact-actions">
         <a href="https://www.facebook.com/orichiin" target="_blank" rel="noreferrer" class="btn btn-light">Facebook ORCcop</a>
-        <a href="https://hentaiorc.xyz/ORCcop-w/Bao_cao_ban_quyen_orccop-w.pdf" target="_blank" rel="noreferrer" class="btn btn-outline-light">Báo cáo bản quyền</a>
+        <a href="https://hentaiorc.xyz/store/copyright/d/Bao_cao_ban_quyen_orccop-w.pdf" target="_blank" rel="noreferrer" class="btn btn-outline-light">Báo cáo bản quyền</a>
       </div>
     </div>
   </section>
@@ -822,8 +882,19 @@
     const saveBtn = document.getElementById('settingsSaveBtn');
     const clearBtn = document.getElementById('settingsClearBtn');
     const statusEl = document.getElementById('settingsStatus');
+    const cacheInspectorToggle = document.getElementById('cacheInspectorToggle');
+    const cacheInspector = document.getElementById('cacheInspector');
+    const cacheUsageLabel = document.getElementById('cacheUsageLabel');
+    const cacheUsageProgress = document.getElementById('cacheUsageProgress');
+    const cacheLimitAlert = document.getElementById('cacheLimitAlert');
+    const cacheSummary = document.getElementById('cacheSummary');
+    const cacheInspectorRefresh = document.getElementById('cacheInspectorRefresh');
+    const cacheEntryList = document.getElementById('cacheEntryList');
+    const cacheLimitInput = document.getElementById('cacheLimitInput');
+    const cacheLimitSaveBtn = document.getElementById('cacheLimitSaveBtn');
+    const searchOverlay = document.getElementById('searchOverlay');
 
-    const defaults = { theme: 'system', wallpaper: null, privacy: false };
+    const defaults = { theme: 'system', wallpaper: null, privacy: false, cacheLimitMb: 50 };
     let state = Object.assign({}, defaults);
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
@@ -855,6 +926,7 @@
         writeStorage('local');
         if(showStatus) setStatus('Đã lưu cài đặt vào bộ nhớ đệm.');
       }
+      refreshCacheIfOpen();
     }
 
     function setStatus(msg, isError){
@@ -899,6 +971,7 @@
       applyTheme();
       applyWallpaper();
       privacyToggle.checked = !!state.privacy;
+      cacheLimitInput.value = state.cacheLimitMb;
     }
 
     // Init from cache (or session, if privacy mode was on)
@@ -969,6 +1042,160 @@
       state = Object.assign({}, defaults, { privacy: state.privacy });
       applyAll();
       setStatus('Đã xóa toàn bộ dữ liệu đã lưu trong cache.');
+      refreshCacheIfOpen();
+    });
+
+    function formatBytes(bytes){
+      if(!bytes) return '0 B';
+      const units = ['B', 'KB', 'MB', 'GB'];
+      const index = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+      return (bytes / Math.pow(1024, index)).toFixed(index ? 2 : 0) + ' ' + units[index];
+    }
+
+    function byteLength(value){
+      return new Blob([String(value)]).size;
+    }
+
+    function addCacheEntry(name, type, size, removeEntry){
+      const entry = document.createElement('div');
+      entry.className = 'cache-entry';
+
+      const info = document.createElement('div');
+      info.className = 'cache-entry-info';
+      const nameEl = document.createElement('span');
+      nameEl.className = 'cache-entry-name';
+      nameEl.textContent = name;
+      nameEl.title = name;
+      const metaEl = document.createElement('span');
+      metaEl.className = 'cache-entry-meta';
+      metaEl.textContent = type + ' · ' + formatBytes(size);
+      info.append(nameEl, metaEl);
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'cache-entry-delete';
+      deleteBtn.type = 'button';
+      deleteBtn.textContent = 'Xóa';
+      deleteBtn.addEventListener('click', async () => {
+        deleteBtn.disabled = true;
+        try{
+          await removeEntry();
+          entry.remove();
+          if(!cacheEntryList.children.length) cacheEntryList.innerHTML = '<p class="cache-empty">Không còn dữ liệu trong danh sách.</p>';
+          await inspectCache();
+        }catch(e){
+          deleteBtn.disabled = false;
+          setStatus('Không thể xóa mục này.', true);
+        }
+      });
+
+      entry.append(info, deleteBtn);
+      cacheEntryList.appendChild(entry);
+    }
+
+    function getStorageEntries(storage, label){
+      const entries = [];
+      for(let index = 0; index < storage.length; index++){
+        const key = storage.key(index);
+        if(key === null) continue;
+        const value = storage.getItem(key) || '';
+        entries.push({
+          name: label + ': ' + key,
+          type: label,
+          size: byteLength(value),
+          remove: () => storage.removeItem(key)
+        });
+      }
+      return entries;
+    }
+
+    function cacheEntryType(request, response){
+      const contentType = response && response.headers.get('content-type');
+      if(contentType) return contentType.split(';')[0];
+      if(request.destination) return request.destination;
+      return 'request';
+    }
+
+    async function inspectCache(){
+      cacheEntryList.replaceChildren();
+      let entries = [];
+      let cacheBytes = 0;
+      let totalBytes = 0;
+
+      try{
+        entries = entries.concat(getStorageEntries(localStorage, 'localStorage'));
+        entries = entries.concat(getStorageEntries(sessionStorage, 'sessionStorage'));
+        totalBytes = entries.reduce((sum, entry) => sum + entry.size, 0);
+      }catch(e){
+        setStatus('Không thể đọc bộ nhớ trình duyệt.', true);
+      }
+
+      if('caches' in window){
+        try{
+          const cacheNames = await caches.keys();
+          for(const cacheName of cacheNames){
+            const cache = await caches.open(cacheName);
+            const requests = await cache.keys();
+            for(const request of requests){
+              const response = await cache.match(request);
+              const contentLength = response && response.headers.get('content-length');
+              const size = contentLength ? Number(contentLength) : (response ? (await response.clone().blob()).size : 0);
+              cacheBytes += size;
+              totalBytes += size;
+              entries.push({
+                name: cacheName + ': ' + request.url,
+                type: cacheEntryType(request, response),
+                size,
+                remove: () => cache.delete(request)
+              });
+            }
+          }
+        }catch(e){
+          setStatus('Không thể đọc Cache Storage.', true);
+        }
+      }
+
+      const limitBytes = state.cacheLimitMb * 1024 * 1024;
+      const usagePercent = Math.min(100, (totalBytes / limitBytes) * 100);
+      const isOverLimit = totalBytes > limitBytes;
+      cacheUsageProgress.value = usagePercent;
+      cacheUsageLabel.textContent = formatBytes(totalBytes) + ' / ' + formatBytes(limitBytes);
+      cacheLimitAlert.hidden = !isOverLimit;
+      cacheLimitAlert.textContent = isOverLimit
+        ? 'Cảnh báo: dữ liệu đang dùng ' + formatBytes(totalBytes) + ', đã vượt hạn mức ' + state.cacheLimitMb + ' MB. Hãy xóa bớt dữ liệu cache.'
+        : '';
+      const limitWarning = isOverLimit ? ' Đã vượt hạn mức.' : ' Trong hạn mức.';
+      cacheSummary.textContent = entries.length + ' mục dữ liệu · Tổng: ' + formatBytes(totalBytes) + ' · Cache Storage: ' + formatBytes(cacheBytes) + ' ·' + limitWarning;
+
+      if(!entries.length){
+        cacheEntryList.innerHTML = '<p class="cache-empty">Không có dữ liệu cache hoặc bộ nhớ trang.</p>';
+        return;
+      }
+      entries.forEach(entry => addCacheEntry(entry.name, entry.type, entry.size, entry.remove));
+    }
+
+    function refreshCacheIfOpen(){
+      if(!cacheInspector.hidden) inspectCache();
+    }
+
+    cacheInspectorToggle.addEventListener('click', () => {
+      const isOpen = cacheInspectorToggle.getAttribute('aria-expanded') === 'true';
+      cacheInspectorToggle.setAttribute('aria-expanded', String(!isOpen));
+      cacheInspector.hidden = isOpen;
+      if(!isOpen) inspectCache();
+    });
+    cacheInspectorRefresh.addEventListener('click', inspectCache);
+
+    cacheLimitSaveBtn.addEventListener('click', () => {
+      const limit = Number(cacheLimitInput.value);
+      if(!Number.isInteger(limit) || limit < 1 || limit > 2048){
+        setStatus('Hạn mức cache phải là số nguyên từ 1 đến 2048 MB.', true);
+        cacheLimitInput.focus();
+        return;
+      }
+      state.cacheLimitMb = limit;
+      persist(false);
+      setStatus('Đã lưu hạn mức cache: ' + limit + ' MB.');
+      if(!cacheInspector.hidden) inspectCache();
     });
 
     function openSettings(){
@@ -989,6 +1216,13 @@
     overlay.querySelectorAll('[data-settings-close]').forEach(el => el.addEventListener('click', closeSettings));
     document.addEventListener('keydown', (e) => {
       if(!overlay.hidden && e.key === 'Escape') closeSettings();
+      const tag = (e.target.tagName || '').toLowerCase();
+      const isTyping = tag === 'input' || tag === 'textarea' || e.target.isContentEditable;
+      if(!isTyping && e.key.toLowerCase() === 's' && (overlay.hidden ? searchOverlay.hidden : true)){
+        e.preventDefault();
+        if(overlay.hidden) openSettings();
+        else closeSettings();
+      }
     });
   })();
 
@@ -1037,9 +1271,9 @@
     { prompt: '$ ', text: 'cat mission.md', color: null },
     { prompt: '', text: 'Chia sẻ tri thức lập trình, công cụ và tài liệu kỹ thuật.', comment: true },
     { prompt: '$ ', text: 'domain --migrate', color: null },
-    { prompt: '', text: 'hentaiorc.xyz  →  ORCcop.com / ORCcop.edu', comment: true },
+    { prompt: '', text: 'hentaiorc.xyz  →  oriciin.cloud', comment: true },
     { prompt: '$ ', text: 'status', color: null },
-    { prompt: '', text: 'Đang chuyển đổi… dự kiến 03/05/2027', comment: true },
+    { prompt: '', text: 'Đang chuyển dữ liệu… băng thông tạm thời đóng', comment: true },
   ];
 
   const body = document.getElementById('terminal-body');
