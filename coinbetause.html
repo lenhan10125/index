@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>ORC Network - Advanced PoW Mining</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #0a0e17; --card: #131b2e; --cyan: #00f2fe; --orange: #ff6b00; --green: #00e676; --purple: #9d4edd; }
+        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; padding: 30px; margin: 0; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1000px; margin: 0 auto; }
+        .card { background: var(--card); border: 1px solid #23314d; padding: 25px; border-radius: 12px; }
+        .full { grid-column: 1 / -1; }
+        h2 { font-family: 'Orbitron'; color: var(--orange); margin-top: 0; font-size: 20px; }
+        .stat-box { background: #1a243d; padding: 15px; border-radius: 8px; margin-bottom: 12px; border-left: 4px solid var(--cyan); }
+        .stat-label { font-size: 12px; color: #8a99ad; text-transform: uppercase; }
+        .stat-val { font-family: 'Fira Code', monospace; font-size: 16px; color: #fff; word-break: break-all; margin-top: 4px; }
+        input { width: 100%; padding: 12px; background: #1a243d; border: 1px solid #23314d; color: #fff; border-radius: 6px; box-sizing: border-box; font-family: 'Fira Code'; margin-bottom: 10px; outline: none; }
+        button { width: 100%; padding: 14px; background: var(--orange); border: none; color: white; font-family: 'Orbitron'; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 14px; transition: 0.2s; }
+        button:hover { opacity: 0.9; }
+        button:disabled { background: #555 !important; cursor: not-allowed; }
+        .btn-secondary { background: #23314d; color: var(--cyan); border: 1px solid var(--cyan); }
+        .btn-purple { background: var(--purple); color: white; }
+        .console { background: #050811; padding: 15px; border-radius: 8px; font-family: 'Fira Code', monospace; font-size: 12px; color: var(--cyan); height: 200px; overflow-y: auto; border: 1px solid #23314d; }
+        .success { color: var(--green); }
+        .error { color: #ff2a6d; }
+        
+        /* Hiệu ứng ẩn/hiện Layout */
+        #dashboardLayout { display: none; } 
+    </style>
+</head>
+<body>
+
+<!-- MÀN HÌNH 1: ĐĂNG NHẬP & TẠO TÀI KHOẢN -->
+<div id="loginLayout" class="grid" style="max-width: 600px;">
+    <div class="card full">
+        <h2 style="text-align: center; font-size: 24px;">ORC NETWORK LOGIN</h2>
+        <p style="text-align: center; color: #8a99ad; font-size: 13px;">Sử dụng Private Key để định danh bảo mật</p>
+        
+        <hr style="border-color: #23314d; margin: 20px 0;">
+
+        <label style="font-size: 12px; color: var(--cyan); display: block; margin-bottom: 4px;">Đăng nhập bằng Private Key (Bắt đầu bằng 0x...):</label>
+        <input type="password" id="txtLoginKey" placeholder="Nhập Private Key của bạn vào đây">
+        <button id="btnLogin" onclick="login()" style="margin-bottom: 25px;">ĐĂNG NHẬP VÀO HỆ THỐNG</button>
+
+        <h3 style="color: var(--purple); font-size: 14px; text-transform: uppercase;">Chưa có tài khoản?</h3>
+        <button class="btn-purple" onclick="generateNewWallet()" style="margin-bottom: 10px;">1. TẠO PRIVATE KEY MỚI</button>
+        <input type="text" id="txtNewKey" placeholder="Private Key mới sẽ xuất hiện ở đây" readonly style="color: #ff2a6d;">
+        <input type="text" id="txtNewAddress" placeholder="Địa chỉ ví công khai" readonly style="color: var(--cyan);">
+        <button class="btn-secondary" onclick="registerWallet()">2. ĐĂNG KÝ VÍ NÀY LÊN MẠNG LƯỚI</button>
+    </div>
+</div>
+
+<!-- MÀN HÌNH 2: GIAO DIỆN LÀM VIỆC (DASHBOARD) -->
+<div id="dashboardLayout" class="grid">
+    <div class="card full" style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h2>TRUNG TÂM KHAI THÁC ORC</h2>
+            <p style="color: #8a99ad; font-size: 13px; margin:0;">Ví đang hoạt động: <b id="lblActiveWallet" style="color:var(--cyan);">orc1q...</b></p>
+        </div>
+        <button class="btn-secondary" style="width: 150px; border-color: #ff2a6d; color: #ff2a6d;" onclick="logout()">ĐĂNG XUẤT</button>
+    </div>
+
+    <!-- Panel Máy Đào -->
+    <div class="card">
+        <h2>MÁY ĐÀO REAL-TIME</h2>
+        <div class="stat-box">
+            <div class="stat-label">Số dư hiện tại</div>
+            <div class="stat-val" id="lblCurrentBalance" style="color: var(--orange);">0 ORC</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label">Tốc Độ Đào (Hashrate)</div>
+            <div class="stat-val" id="lblHashrate" style="color: var(--green);">0 H/s</div>
+        </div>
+        <button id="btnMine" onclick="toggleMining()">BẮT ĐẦU ĐÀO COIN</button>
+    </div>
+
+    <!-- Panel Chuyển Tiền -->
+    <div class="card">
+        <h2>CHUYỂN COIN ORC</h2>
+        <label style="font-size: 12px; color: #8a99ad; display: block; margin-bottom: 4px;">Ví người nhận (Bắt đầu bằng orc...):</label>
+        <input type="text" id="txtRecipient" placeholder="Nhập địa chỉ ví nhận">
+        
+        <label style="font-size: 12px; color: #8a99ad; display: block; margin-bottom: 4px;">Số lượng ORC:</label>
+        <input type="number" id="txtAmount" placeholder="VD: 50.0">
+        
+        <button class="btn-secondary" style="color: var(--green); border-color: var(--green);" onclick="transferORC()">GỬI LỆNH CHUYỂN TIỀN</button>
+    </div>
+
+    <!-- Console Log -->
+    <div class="card full">
+        <h2>LOG TIẾN TRÌNH</h2>
+        <div class="console" id="consoleLog">> Hệ thống sẵn sàng...</div>
+    </div>
+</div>
+
+<script>
+    // BẠN CẦN DÁN URL APP SCRIPT VÀO ĐÂY
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwRS_DnyZ-HsVZa_ze8zDOC1shuBcicazXnU5JrfzISTvTXa7WE4I6eIQYJQ3LUo-No/exec";
+
+    let currentUserAddress = "";
+    let currentPrivateKey = ""; // Giữ Private Key trong bộ nhớ phiên làm việc (biến JS), không lưu localStorage
+    let isMining = false;
+    const MASK_64BIT = (1n << 64n) - 1n;
+    const TARGET = BigInt("0x0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+
+    // ==========================================
+    // 1. CHỨC NĂNG BẢO MẬT & ĐĂNG NHẬP
+    // ==========================================
+    
+    // Thuật toán: Từ Private Key -> Tạo Hash -> Cắt 26 ký tự làm Public Address
+    async function deriveAddress(privateKeyStr) {
+        let cleanKey = privateKeyStr.replace(/^0x/, ''); // Xóa 0x nếu có
+        const encoder = new TextEncoder();
+        const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(cleanKey));
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const addressHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        return "orc1q" + addressHash.substring(0, 26);
+    }
+
+    async function login() {
+        const pKey = document.getElementById('txtLoginKey').value.trim();
+        if(!pKey) return alert("Vui lòng nhập Private Key!");
+        
+        const btn = document.getElementById('btnLogin');
+        btn.innerText = "ĐANG KIỂM TRA MẠNG LƯỚI...";
+        btn.disabled = true;
+
+        try {
+            // Gửi thẳng Private Key lên server qua HTTPS để server TỰ suy ra địa chỉ và xác thực.
+            // Server không lưu lại Private Key này ở đâu cả, chỉ dùng tạm trong lúc xử lý request.
+            const res = await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "login", privateKey: pKey })
+            });
+            const data = await res.json();
+
+            if(data.exists) {
+                currentUserAddress = data.walletAddress || await deriveAddress(pKey);
+                currentPrivateKey = pKey;
+                document.getElementById('loginLayout').style.display = 'none';
+                document.getElementById('dashboardLayout').style.display = 'grid';
+                document.getElementById('lblActiveWallet').innerText = currentUserAddress;
+                document.getElementById('lblCurrentBalance').innerText = data.balance + " ORC";
+                log(`<span class="success">Đăng nhập thành công vào ví: ${escapeHtml(currentUserAddress)}</span>`);
+            } else {
+                alert("Tài khoản chưa được đăng ký hoặc sai Private Key! Vui lòng kiểm tra lại.");
+            }
+        } catch (e) {
+            alert("Lỗi kết nối máy chủ!");
+        }
+        btn.innerText = "ĐĂNG NHẬP VÀO HỆ THỐNG";
+        btn.disabled = false;
+    }
+
+    function logout() {
+        if(isMining) toggleMining(); // Dừng đào nếu đang đào
+        currentUserAddress = "";
+        currentPrivateKey = "";
+        document.getElementById('txtLoginKey').value = "";
+        document.getElementById('loginLayout').style.display = 'grid';
+        document.getElementById('dashboardLayout').style.display = 'none';
+        document.getElementById('consoleLog').innerHTML = "> Đã đăng xuất.";
+    }
+
+    // ==========================================
+    // 2. TẠO & ĐĂNG KÝ VÍ
+    // ==========================================
+    async function generateNewWallet() {
+        const array = new Uint8Array(32);
+        window.crypto.getRandomValues(array);
+        const privateKeyHex = Array.from(array, b => b.toString(16).padStart(2, '0')).join('');
+        
+        const publicAddress = await deriveAddress(privateKeyHex);
+
+        document.getElementById('txtNewKey').value = "0x" + privateKeyHex;
+        document.getElementById('txtNewAddress').value = publicAddress;
+        alert("LƯU Ý QUAN TRỌNG:\nHãy copy và CẤT GIỮ Private Key (Bắt đầu bằng 0x) ở nơi an toàn. Bạn sẽ mất ví nếu mất mã này!");
+    }
+
+    async function registerWallet() {
+        const address = document.getElementById('txtNewAddress').value;
+        const pKey = document.getElementById('txtNewKey').value;
+        if (!address) return alert("Vui lòng Bấm TẠO PRIVATE KEY trước!");
+
+        try {
+            const res = await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "createWallet", walletAddress: address })
+            });
+            const data = await res.json();
+            if (data.success) {
+                alert("Tạo tài khoản thành công! Khóa đã được điền sẵn, hãy bấm ĐĂNG NHẬP.");
+                document.getElementById('txtLoginKey').value = pKey;
+            } else {
+                alert("Lỗi: " + data.message);
+            }
+        } catch(e) { alert("Lỗi mạng!"); }
+    }
+
+    // ==========================================
+    // 3. THUẬT TOÁN ĐÀO COIN (Chỉ chạy khi đã Đăng nhập)
+    // ==========================================
+    function rotateLeft64(val, shift) { let s = BigInt(shift); return ((val << s) | (val >> (64n - s))) & MASK_64BIT; }
+    function multiRoundMathPoW(x) {
+        let y = BigInt(x);
+        for (let i = 0; i < 16; i++) y = (y * y + y - 7n + rotateLeft64(y, 13)) & MASK_64BIT;
+        return y;
+    }
+    async function doubleSHA256(message) {
+        const encoder = new TextEncoder();
+        const firstHash = await crypto.subtle.digest('SHA-256', encoder.encode(message));
+        const secondHash = await crypto.subtle.digest('SHA-256', firstHash);
+        return Array.from(new Uint8Array(secondHash)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    async function toggleMining() {
+        const btn = document.getElementById('btnMine');
+        if (!isMining) {
+            isMining = true;
+            btn.innerText = "DỪNG MÁY ĐÀO";
+            btn.style.background = "#e94560";
+            log("Khởi chạy Mining Core cho ví: " + currentUserAddress);
+            runMiner();
+        } else {
+            isMining = false;
+            btn.innerText = "BẮT ĐẦU ĐÀO COIN";
+            btn.style.background = "var(--orange)";
+            log("Đã tạm dừng máy đào.");
+            document.getElementById('lblHashrate').innerText = "0 H/s";
+        }
+    }
+
+    async function runMiner() {
+        let nonceX = BigInt(Math.floor(Math.random() * 10000000));
+        let startTime = Date.now();
+        let hashCount = 0;
+
+        const version = 2;
+        const prevBlockHash = "0000a3f891c2e411b822d109f3bca8319c832e19b84a921c8109312e8e12";
+        const merkleRoot = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+        const timestamp = Date.now();
+
+        while (isMining) {
+            let yMath = multiRoundMathPoW(nonceX);
+            let hexY = yMath.toString(16).padStart(16, '0').toUpperCase();
+            let blockHeader = `${version}${prevBlockHash}${merkleRoot}${timestamp}${hexY}`;
+            let blockHashHex = await doubleSHA256(blockHeader);
+            let blockHashInt = BigInt("0x" + blockHashHex);
+
+            hashCount++;
+            
+            if (hashCount % 150 === 0) {
+                let elapsedSeconds = (Date.now() - startTime) / 1000;
+                document.getElementById('lblHashrate').innerText = `${Math.round(hashCount / (elapsedSeconds || 1))} H/s`;
+                await new Promise(r => setTimeout(r, 1)); // Tránh treo trình duyệt
+            }
+
+            if (blockHashInt <= TARGET) {
+                log(`<span class="success">[THÀNH CÔNG] Đã tìm thấy khối! Gửi xác minh...</span>`);
+                isMining = false;
+                document.getElementById('btnMine').innerText = "BẮT ĐẦU ĐÀO COIN";
+                document.getElementById('btnMine').style.background = "var(--orange)";
+                
+                try {
+                    const res = await fetch(GOOGLE_SCRIPT_URL, {
+                        method: "POST",
+                        body: JSON.stringify({
+                            action: "verifyBlock", version, prevBlockHash, merkleRoot, timestamp,
+                            nonceX: nonceX.toString(), minerPrivateKey: currentPrivateKey
+                        })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        log(`<span class="success">Cộng thưởng thành công! Hash: ${escapeHtml(data.blockHash.substring(0,10))}...</span>`);
+                        document.getElementById('lblCurrentBalance').innerText = data.newBalance + " ORC";
+                    } else {
+                        log(`<span class="error">[LỖI SERVER] ${escapeHtml(data.message)}</span>`);
+                    }
+                } catch(e) { log("<span class='error'>Lỗi kết nối gửi Block!</span>"); }
+                break;
+            }
+            nonceX++;
+        }
+    }
+
+    // ==========================================
+    // 4. TÍNH NĂNG CHUYỂN TIỀN
+    // ==========================================
+    async function transferORC() {
+        const recipient = document.getElementById('txtRecipient').value.trim();
+        const amountStr = document.getElementById('txtAmount').value.trim();
+        const amount = parseFloat(amountStr);
+
+        if(!recipient || !amountStr) return alert("Nhập đầy đủ ví nhận và số lượng!");
+        if(!recipient.startsWith("orc")) return alert("Địa chỉ ví nhận không hợp lệ (phải bắt đầu bằng orc)!");
+        if(!isFinite(amount) || amount <= 0) return alert("Số lượng ORC không hợp lệ!");
+        if(recipient === currentUserAddress) return alert("Không thể tự chuyển cho chính mình!");
+
+        log(`Đang xử lý chuyển ${escapeHtml(amountStr)} ORC sang [${escapeHtml(recipient.substring(0,8))}...]...`);
+        try {
+            const res = await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({
+                    action: "transfer", senderPrivateKey: currentPrivateKey,
+                    recipientAddress: recipient, amount: amountStr
+                })
+            });
+            const data = await res.json();
+            if(data.success) {
+                log(`<span class="success">[CHUYỂN THÀNH CÔNG] Đã gửi ${escapeHtml(amountStr)} ORC.</span>`);
+                document.getElementById('lblCurrentBalance').innerText = data.newBalance + " ORC";
+            } else {
+                log(`<span class="error">[THẤT BẠI] ${escapeHtml(data.message)}</span>`);
+            }
+        } catch(e) { log("<span class='error'>Lỗi mạng khi chuyển tiền!</span>"); }
+    }
+
+    // Thoát ký tự HTML đặc biệt trước khi chèn vào log, phòng chèn mã độc (XSS)
+    // qua dữ liệu do người dùng tự nhập hoặc server trả về.
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = String(str);
+        return div.innerHTML;
+    }
+
+    function log(msg) {
+        const el = document.getElementById('consoleLog');
+        el.innerHTML += `<br>> ${msg}`;
+        el.scrollTop = el.scrollHeight;
+    }
+</script>
+</body>
+</html>
