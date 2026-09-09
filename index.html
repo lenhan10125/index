@@ -75,7 +75,6 @@
             <p id="result-message" style="margin-top: 15px;"></p>
         </div>
     </div>
-
     <script>
         // Khi JavaScript hoạt động, hiện phần nội dung kiểm tra
         document.getElementById('js-content').classList.remove('hidden');
@@ -97,22 +96,19 @@
 
             if (userAnswer === correctAnswer) {
                 resultMessage.style.color = "green";
-                resultMessage.innerText = "Xác minh thành công! Đang chuyển hướng sang hentaiorc.xyz...";
+                resultMessage.innerText = "Xác minh thành công! Đang chuyển hướng...";
                 
                 // Vô hiệu hóa nút bấm và ô nhập để tránh gửi lại
                 submitBtn.disabled = true;
                 document.getElementById('captcha-answer').disabled = true;
 
-                // Chuyển hướng sau 2 giây
+                // Thay đổi đường dẫn thành tương đối để chạy mượt mà
                 setTimeout(function() {
-                    window.location.href = "https://hentaiorc.xyz/home.html";
-                }, 2000);
+                    window.location.href = "home.html";
+                }, 1000); // Giảm xuống 1 giây để chuyển hướng nhanh hơn
             } else {
                 resultMessage.style.color = "red";
                 resultMessage.innerText = "Kết quả không đúng, vui lòng thử lại!";
             }
         });
     </script>
-
-</body>
-</html>
